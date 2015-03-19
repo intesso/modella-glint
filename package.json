@@ -1,0 +1,30 @@
+{
+  "name": "modella-glint",
+  "version": "1.0.0",
+  "description": "Glint Adapter persistence layer for [Modella](https://github.com/modella/modella/).",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/intesso/modella-glint.git"
+  },
+  "keywords": [
+    "modella",
+    "storage",
+    "adapter",
+    "glint"
+  ],
+  "author": "Andi Neck",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/intesso/modella-glint/issues"
+  },
+  "homepage": "https://github.com/intesso/modella-glint",
+  "devDependencies": {
+    "tape": "^3.5.0",
+    "glint-adapter": "^1.0.0",
+    "glint-adapter-fs": "^1.0.0"
+  }
+}

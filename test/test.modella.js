@@ -8,7 +8,7 @@ var FS = require('glint-adapter-fs')
 var fs = FS({address: __dirname + '/storage'});
 var adapter = Adapter(fs).db('myDb').type('user');
 
-function createUser() {
+function defineUser() {
   // schema
   var User = model('user');
 
@@ -27,7 +27,7 @@ function createUser() {
 test('test adapter functions', function (t) {
   t.plan(4);
 
-  var User = createUser();
+  var User = defineUser();
   t.true(typeof User.load == 'function');
   t.true(typeof User.save == 'function');
   t.true(typeof User.remove == 'function');
@@ -38,7 +38,7 @@ test('test adapter functions', function (t) {
 test('test not in model', function (t) {
   t.plan(4);
 
-  var User = createUser();
+  var User = defineUser();
   var user = new User({hafe: 'chaes', name: 'gruyere'});
   user.email('gruyere@aoc.ch');
   // -> not defined data in schema is not showing up
@@ -55,7 +55,7 @@ test('test not in model', function (t) {
 test('test save with primary', function (t) {
   t.plan(5);
 
-  var User = createUser();
+  var User = defineUser();
   var user = new User().name('gruyere').email('gruyere@aoc.ch').primary('surchoix');
 
   user.save(function (err, model) {
@@ -74,7 +74,7 @@ test('test save with primary', function (t) {
 test('test save with id', function (t) {
   t.plan(2);
 
-  var User = createUser();
+  var User = defineUser();
   var user = new User().name('gruyere').email('gruyere@aoc.ch').id('GranCrus');
 
   user.save(function (err, model) {
@@ -89,7 +89,7 @@ test('test save with id', function (t) {
 test('test update, adding password, phone', function (t) {
   t.plan(4);
 
-  var User = createUser();
+  var User = defineUser();
 
   // note: load is only available on the `schema`, not on the instance.
   User.load('GranCrus', function (err, user) {
@@ -111,7 +111,7 @@ test('test update, adding password, phone', function (t) {
 test('test don\'t save without id', function (t) {
   t.plan(2);
 
-  var User = createUser();
+  var User = defineUser();
   var user = new User().name('gruyere').email('gruyere@aoc.ch');
   // missing primary
 
@@ -125,7 +125,7 @@ test('test don\'t save without id', function (t) {
 test('test don\'t load without id', function (t) {
   t.plan(2);
 
-  var User = createUser();
+  var User = defineUser();
   // note: load is only available on the `schema`, not on the instance.
   User.load(function (err, model) {
     t.true(err);
@@ -137,7 +137,7 @@ test('test don\'t load without id', function (t) {
 test('test load with id', function (t) {
   t.plan(3);
 
-  var User = createUser();
+  var User = defineUser();
   // note: load is only available on the `schema`, not on the instance.
   User.load('surchoix', function (err, model) {
     var json = model.json();
@@ -151,7 +151,7 @@ test('test load with id', function (t) {
 test('test find user with name gruyere', function (t) {
   t.plan(6);
 
-  var User = createUser();
+  var User = defineUser();
   // note: load is only available on the `schema`, not on the instance.
   User.find({name: 'gruyere'}, function (err, model) {
     t.false(err);
@@ -167,10 +167,25 @@ test('test find user with name gruyere', function (t) {
 
 });
 
+
+test('test call `find` with string -> forward to load', function (t) {
+  t.plan(3);
+
+  var User = defineUser();
+  // note: load is only available on the `schema`, not on the instance.
+  User.find('surchoix', function (err, model) {
+    var json = model.json();
+    t.false(err);
+    t.equal(json.name, 'gruyere');
+    t.equal(json.email, 'gruyere@aoc.ch');
+  });
+
+});
+
 test('test delete user with id surchoix', function (t) {
   t.plan(4);
 
-  var User = createUser();
+  var User = defineUser();
   // 1. load the user
   User.load('surchoix', function (err, user) {
     var json = user.json();

@@ -167,7 +167,6 @@ test('test find user with name gruyere', function (t) {
 
 });
 
-
 test('test call `find` with string -> forward to load', function (t) {
   t.plan(3);
 

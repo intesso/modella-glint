@@ -26,7 +26,10 @@ storage.find = function (query, fn) {
   var self = this;
   if (typeof query == 'function') return query(new Error('first argument must be a query object'));
   fn = fn || noop;
-  storage.setAdapterType();
+
+  if (typeof query == 'string') return self.load(query, fn);
+
+  this.setAdapterType();
 
   storage.adapter.find(query, function (err, content) {
     if (err) return fn(err);
@@ -38,7 +41,7 @@ storage.load = function (id, fn) {
   var self = this;
   if (typeof id == 'function') return id(new Error('first argument must be an id'));
   fn = fn || noop;
-  storage.setAdapterType();
+  this.setAdapterType();
 
   storage.adapter.load(id, function (err, content) {
     if (err) return fn(err);
@@ -67,7 +70,7 @@ storage.remove = function (fn) {
 
 storage.setAdapterType = function () {
   var type = storage.adapter.type();
-  if (!type || type != this.modelName) storage.adapter.type(this.modelName);
+  if (!type || (this.modelName && type != this.modelName)) storage.adapter.type(this.modelName);
 };
 
 function noop() {

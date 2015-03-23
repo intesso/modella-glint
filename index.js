@@ -29,7 +29,8 @@ storage.find = function (query, fn) {
 
   if (typeof query == 'string') return self.load(query, fn);
 
-  this.setAdapterType();
+  var model = this.model ? this.model : this;
+  model.setAdapterType();
 
   storage.adapter.find(query, function (err, content) {
     if (err) return fn(err);
@@ -41,7 +42,8 @@ storage.load = function (id, fn) {
   var self = this;
   if (typeof id == 'function') return id(new Error('first argument must be an id'));
   fn = fn || noop;
-  this.setAdapterType();
+  var model = this.model ? this.model : this;
+  model.setAdapterType();
 
   storage.adapter.load(id, function (err, content) {
     if (err) return fn(err);
@@ -52,8 +54,9 @@ storage.load = function (id, fn) {
 storage.update =
   storage.save = function (fn) {
     fn = fn || noop;
-    storage.setAdapterType();
+    var model = this.model ? this.model : this;
     var id = this.primary();
+    model.setAdapterType();
     if (!id) return fn(new Error('primary (id) is not set'));
     storage.adapter.save(id, this.toJSON(), function (err, content) {
       fn();
@@ -62,15 +65,18 @@ storage.update =
 
 storage.remove = function (fn) {
   fn = fn || noop;
-  storage.setAdapterType();
+  var model = this.model ? this.model : this;
   var id = this.primary();
+  model.setAdapterType();
   if (!id) return fn(new Error('primary (id) is not set'));
   storage.adapter.delete(id, fn);
 };
 
 storage.setAdapterType = function () {
+  var model = this.model ? this.model : this;
+  var name = model.modelName;
   var type = storage.adapter.type();
-  if (!type || (this.modelName && type != this.modelName)) storage.adapter.type(this.modelName);
+  if (!type || (name && type != name)) storage.adapter.type(name);
 };
 
 function noop() {

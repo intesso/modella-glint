@@ -17,6 +17,8 @@ function defineUser() {
     .attr('name')
     .attr('email')
     .attr('phone')
+    .attr('tokens')
+    .attr('profile')
     .attr('password');
 
   // add storage layer
@@ -70,7 +72,6 @@ test('test save with primary', function (t) {
 
 });
 
-
 test('test save with id', function (t) {
   t.plan(2);
 
@@ -82,6 +83,40 @@ test('test save with id', function (t) {
 
     t.false(err);
     t.equal(json.id, 'GranCrus');
+  });
+
+});
+
+
+test('test save with tokens array', function (t) {
+  t.plan(3);
+
+  var User = defineUser();
+  var user = new User().name('thurgau').email('gruyere@aoc.ch').id('Max').tokens([1,2,3,4]);
+
+  user.save(function (err, model) {
+    var json = model.toJSON();
+
+    t.false(err);
+    t.equal(json.id, 'Max');
+    t.equal(json.tokens.length, 4);
+  });
+
+});
+
+test('test save with profile object', function (t) {
+  t.plan(3);
+
+  var User = defineUser();
+  var user = new User().name('thurgau').email('gruyere@aoc.ch').id('Max').tokens([1,2,3,4]).profile({name: 'scharf', website: 'www.scharfermax.ch'});
+
+  user.save(function (err, model) {
+    var json = model.toJSON();
+
+    t.false(err);
+    t.equal(json.id, 'Max');
+    t.equal(json.profile.name, 'scharf');
+
   });
 
 });
